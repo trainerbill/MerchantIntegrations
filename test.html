@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.paypalobjects.com/pph/websdk/js/pphwebsdk-1.1.3-debug.min.js"></script>
+    <script>
+        function onSetupPayPalHereBtnClicked() {
+            pphwebsdk.Setup.startUIFlow().then(function (completionStep) {
+                // PPHWebInterface has been installed and, if clicked, a test of the connected card reader was completed.
+                // setup is complete
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <button type="button" id='setupPPH' onclick='onSetupPayPalHereBtnClicked()'>Setup PayPal Here</button>
+</body>

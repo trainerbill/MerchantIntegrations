@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Ensures optimal rendering on mobile devices. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" /> <!-- Optimal Internet Explorer compatibility -->
+    <script
+        src="https://github.paypal.com/pages/PPH-SDK/retail-sdk-web/pages/pph/js/pphwebsdk-1.1.4-debug.min.js"></script>
+    <script>
+        pphwebsdk.Setup.isSetupComplete().then(function () {
+            document.getElementById("setupPPH").style.display = "none";
+            document.getElementById("takePayment").style.display = "block";
+        }).catch(function (err) {
+            // Run startUIFlow to setup SDK
+            document.getElementById("setupPPH").style.display = "block";
+            document.getElementById("takePayment").style.display = "none";
+            alert(err);
+        });
+    </script>
+
+
+</head>
+
+<body>
+    <button type="button" id='setupPPH' onclick='onSetupPayPalHereBtnClicked()'>Setup PayPal Here</button>
+    <button type="button" id='takePayment' onclick='onTakePaymentBtnClicked()'>Take Payment</button>
+
+    <script>
+        function onSetupPayPalHereBtnClicked() {
+            pphwebsdk.Setup.startUIFlow().then(function (completionStep) {
+                // all good - setup was succes
+                console.log('Setup: ' + JSON.stringify(completionStep));
+            }).catch(function (error) {
+                // setup did not complete - check error and try again
+                console.log('Setup: ' + JSON.stringify(error));
+            });
+        }
+        function onTakePaymentBtnClicked() {
+            var access_token = "A23AAER3stEqTkm3xewa090TfxdegFa8_0JWfBAOw-8jlLk6uRofm3uD5ockeBu9rg3CAJ4O1Hz0S64chky12KTg2yAsUTcwA";
+            var refresh_url = "";
+            var environment = pphwebsdk.Types.Environment.SANDBOX;
+            var identity = pphwebsdk.Identity.create(access_token).refreshUrl(refresh_url).environment(environment);
+            var payment_config = pphwebsdk.PaymentConfiguration.create();
+            payment_config.subscribe
+                .onConnectReaderSuccess(function (details) {
+                    //Details of card reader provided
+                    console.log('CardReaderConnected: ' + JSON.stringify(details));
+                })
+                .onConnectReaderFailure(function (err) {
+                    //Unable to connect to reader - handle error scenario
+                    console.log('CardReaderConnectFailed: ' + JSON.stringify(err));
+                })
+                .onMerchantInitializeSuccess(function (merchant) {
+                    console.log('MerchInitSuccess: ' + JSON.stringify(merchant));
+                    //Merchant initialized successfully
+                })
+                .onMerchantInitializeFailure(function (err) {
+                    //Unable to intialize merchant - handle error scenario
+                    console.log('MerchInitFail: ' + JSON.stringify(err));
+                })
+                .onPaymentSuccess(function (txnRecord) {
+                    //Payment success
+                    console.log('PaymentSuccess: ' + JSON.stringify(txnRecord));
+                })
+                .onPaymentFailure(function (err) {
+                    console.log('PaymentFail: ' + JSON.stringify(err));
+                    //Payment failed - handle error scenario
+                });
+            var reader = payment_config.reader();
+            reader.connectionType(pphwebsdk.Types.ReaderConnectionType.USB);
+            reader.manufacturer(pphwebsdk.Types.Manufacturers.MIURA);
+            var order = pphwebsdk.Order.create();
+            order.item('Cake').price(1.00).quantity(3);
+            order.item('Coffee').price(2.00).quantity(3);
+            payment_config.card()
+                .number("5555555555554444")
+                .cvv("123")
+                .expiry("022022")
+                .done();
+            var payment = pphwebsdk.Payment.create(identity, payment_config);
+            payment.for(order).as(pphwebsdk.Types.PaymentMethod.KEYIN).sale();
+        }
+    </script>
+</body>
+
+</html>

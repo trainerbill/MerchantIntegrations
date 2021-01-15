@@ -1,0 +1,22 @@
+{
+  "name": "merchantintegrations",
+  "version": "1.0.0",
+  "description": "",
+  "main": "add123.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trainerbill/MerchantIntegrations.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trainerbill/MerchantIntegrations/issues"
+  },
+  "homepage": "https://github.com/trainerbill/MerchantIntegrations#readme",
+  "dependencies": {
+    "braintree": "^2.23.0"
+  }
+}
